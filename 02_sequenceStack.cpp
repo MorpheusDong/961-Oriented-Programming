@@ -1,11 +1,11 @@
 #include <iostream>
-#define maxsize   10
+#define MAXSIZE   10
 using namespace std;
 
 //数据类型定义
 typedef struct SequenceStack
 {
-	int data[maxsize];
+	int data[MAXSIZE];
 	int top;
 }stack;
 
@@ -27,7 +27,7 @@ bool isEmpty(stack S)
 //入栈
 void push(stack& S,int x)
 {
-	if (S.top < maxsize)
+	if (S.top < MAXSIZE)
 	{
 		S.data[++S.top] = x;
 	}
