@@ -239,23 +239,138 @@ void levelOrder2(BiNode* T)
 	}
 }
 
-//to do:求二叉树的深度
+//求二叉树的深度
+int treeDepth(BiNode* T)
+{
+	BiNode* p = T;
+	BiNode* last = T;
+	liQueue* Q = (liQueue*)malloc(sizeof(liQueue));
+	initQueue(Q);
+	int levels = 0;
+	enQueue(Q, p);
 
-//to do:求二叉树的宽度
+	while (!isQueueEmpty(Q))
+	{
+		deQueue(Q, p);
+		if (p->lchild)
+			enQueue(Q, p->lchild);
+		if (p->rchild)
+			enQueue(Q, p->rchild);
 
-//to do:统计二叉树的叶子节点(无分支)数量
+		if (p == last)    //走到层最右
+		{
+			++levels;
+			if (Q->rear != NULL)
+				last = Q->rear->pt;    //更新下一层的最右节点
+		}
+	}
+	return levels;
+}
 
-//to do:统计二叉树非空节点(单分支+双分支)数量
+//求二叉树的宽度
+//（在上面略作修改）
+int treeWidth(BiNode* T)
+{
+	BiNode* p = T;
+	BiNode* last = T;
+	liQueue* Q = (liQueue*)malloc(sizeof(liQueue));
+	initQueue(Q);
+	enQueue(Q, p);
+	int levelNodes = 0;    //单层节点统计
+	int maxWidth = 0;    //最大宽度
 
-//to do:统计二叉树双分支节点数量
+	while (!isQueueEmpty(Q))
+	{
+		deQueue(Q, p);
+		++levelNodes;
+		if (p->lchild)
+			enQueue(Q, p->lchild);
+		if (p->rchild)
+			enQueue(Q, p->rchild);
 
-//to do:找二叉树中两节点最近的公共祖先
+		if (p == last)
+		{
+			if (levelNodes > maxWidth)
+				maxWidth = levelNodes;    //更新最大宽度
+			levelNodes = 0;    //重置单层节点统计
 
-//to do:判断一棵树是否是完全二叉树
+			if (Q->rear != NULL)
+				last = Q->rear->pt;
+		}
+	}
+	return maxWidth;
+}
 
-//to do:按先序遍历输出第k个节点的值
+//统计二叉树的叶子节点(无分支)数量
+static int leaves = 0;
+void countLeaves(BiNode* T)
+{
+	if (T == NULL)
+		return;
+	else
+	{
+		if (T->lchild == NULL && T->rchild == NULL)
+			++leaves;
+		countLeaves(T->lchild);
+		countLeaves(T->rchild);
+	}
+}
 
-//to do:输出值为x的节点的所有祖先/所有孩子
+//判断一棵树是否是完全二叉树
+//(完全二叉树应满足：层次遍历时遇到空节点，空节点后面不应该再有节点）
+bool isComplete(BiNode* T)
+{
+	if (T == NULL)
+		return true;    //空树是完全二叉树
+
+	BiNode* p = T;
+	liQueue* Q = (liQueue*)malloc(sizeof(liQueue));
+	initQueue(Q);
+	enQueue(Q, p);
+	while (!isQueueEmpty(Q))
+	{
+		deQueue(Q, p);
+		if (p)
+		{
+			enQueue(Q, p->lchild);
+			enQueue(Q, p->rchild);
+		}
+		else   
+			while (!isQueueEmpty(Q))
+			{
+				deQueue(Q, p);
+				if (p)
+					return false;
+			}
+	}
+	return true;
+}
+
+//输出中缀表达式
+void treeToExp(BiNode* T,int deep)    //deep控制括号
+{
+    if(T == NULL)
+	    return;
+	else if(T->lchild == NULL && T->rchild == NULL)
+	{
+	    cout<<T->data;
+	}
+	else
+	{
+	    if(deep>1)
+		    cout<<"(";
+		treeToExp(T->lchild,deep+1);
+		cout<<T->data;
+		treeToExp(T->rchild,deep+1);
+		if(deep>1)
+		    cout<<")";
+	}
+}
+
+void BiTreeToExp(BiNode* T)
+{
+    treeToExp(T,1);
+}
 
 //建树测试
 //012##3##45###
